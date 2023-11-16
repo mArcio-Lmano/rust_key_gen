@@ -1,8 +1,8 @@
-mod ui;
+mod ui_debug;
 mod database;
 
-use crate::ui::app_state_derived_lenses::passsaves;
-use crate::ui::{AppState, build_ui};
+
+use crate::ui_debug::{AppState, build_ui};
 use crate::database::{Database, PassSave};
 
 
@@ -28,16 +28,28 @@ fn main() {
         println!("Found Entery {}", pass_save);
     }
     
-
-    let main_window = WindowDesc::new(build_ui(pass_saves))     
+    let main_window = WindowDesc::new(build_ui(pass_saves.clone()))
         .title("Hello World!")
         .window_size((400.0, 400.0));
 
-    let _launch = AppLauncher::with_window(main_window)
+    // create the initial app state
+    let initial_state: AppState = AppState::new(pass_saves);
+
+    // start the application. Here we pass in the application state.
+    AppLauncher::with_window(main_window)
         .log_to_console()
-        .launch(AppState::new(database
-            .query_all_passsaves()
-            .expect("Failed to get the enteries")));
+        .launch(initial_state)
+        .expect("Failed to launch application");
+
+    // let main_window = WindowDesc::new(build_ui(pass_saves))     
+    //     .title("Hello World!")
+    //     .window_size((400.0, 400.0));
+
+    // let _launch = AppLauncher::with_window(main_window)
+    //     .log_to_console()
+    //     .launch(AppState::new(database
+    //         .query_all_passsaves()
+    //         .expect("Failed to get the enteries")));
         
     // println!("Hello World");
 
