@@ -1,8 +1,8 @@
-mod ui_debug;
+mod ui;
 mod database;
 
 
-use crate::ui_debug::{AppState, build_ui};
+use crate::ui::{AppState, build_ui};
 use crate::database::{Database, PassSave};
 
 
