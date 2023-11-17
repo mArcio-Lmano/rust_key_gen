@@ -1,7 +1,7 @@
 use crate::database::{self, PassSave};
 
 use druid::text::{FontDescriptor, FontFamily, FontWeight, TextAlignment};
-use druid::widget::{Flex, Label, Button, ListIter, Scroll, List, Split, Container, SizedBox, ZStack, TextBox, CrossAxisAlignment, Align};
+use druid::widget::{Flex, Label, Button, ListIter, Scroll, List, Split, Container, SizedBox, ZStack, TextBox, CrossAxisAlignment, Align, Padding, MainAxisAlignment};
 use druid::{Widget, Data, Lens, Env, Color, WidgetExt, Vec2, UnitPoint};
 
 const TEXT_BOX_WIDTH: f64 = 500.0;
@@ -65,8 +65,6 @@ pub fn build_ui(pass_saves_fn: Vec<PassSave>) -> impl Widget<AppState> {
         .fix_width(TEXT_BOX_WIDTH)
         .lens(AppState::password_label);
 
-
-
     for pass_save in pass_saves_fn {
         let site_button = Button::new(pass_save.site.clone())
             .on_click(move | _ctx, data: &mut AppState, _env| {
@@ -81,21 +79,22 @@ pub fn build_ui(pass_saves_fn: Vec<PassSave>) -> impl Widget<AppState> {
                 _ctx.request_update();
             });
 
-        col_sites.add_child(site_button);
-        // col_sites.with_default_spacer();
+            col_sites = col_sites.with_child(Padding::new(5.0, site_button.center().align_horizontal(UnitPoint::CENTER)));
     }
+
     let info_labels = Container::new(Flex::column()
         .with_child(site_info_box)
         .with_child(user_info_box)
         .with_child(password_info_box)
     ).center();
 
-    let sites_butons = col_sites.center();
+    let sites_buttons = col_sites.center();
     // Create a split layout with scrolling for the buttons and a column with the label
     let split = Split::columns(
-        Scroll::new(sites_butons),
+        Scroll::new(sites_buttons),
         info_labels
-    );
+    ).draggable(true)
+        .split_point(0.2);
     
     split
 }
