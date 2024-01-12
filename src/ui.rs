@@ -1,4 +1,4 @@
-use crate::database::{self, PassSave};
+use crate::database::{self, PassSave, Database};
 
 use druid::text::{FontDescriptor, FontFamily, FontWeight, TextAlignment};
 use druid::widget::{Flex, Label, Button, ListIter, Scroll, List, Split, Container, SizedBox, ZStack, TextBox, CrossAxisAlignment, Align, Padding, MainAxisAlignment};
@@ -6,9 +6,10 @@ use druid::{Widget, Data, Lens, Env, Color, WidgetExt, Vec2, UnitPoint};
 
 const TEXT_BOX_WIDTH: f64 = 500.0;
 
-#[derive(Clone, Lens)]
+#[derive(Clone)]
 pub struct AppState {
-    pub passsaves: Vec<database::PassSave>,
+    // pub database: Database,
+    // pub pass_saves: &Vec<PassSave>,
     pub site_label: String,
     pub user_label: String,
     pub password_label: String,
@@ -17,9 +18,9 @@ pub struct AppState {
 }
 
 impl AppState {
-    pub fn new(passsaves: Vec<database::PassSave>) -> Self {
+    pub fn new(database: &Database) -> Self {
         AppState { 
-            passsaves,
+            // pass_saves: database.passsaves,
             site_label: "".to_string(),
             user_label: "".to_string(),
             password_label: "".to_string(),
@@ -29,10 +30,31 @@ impl AppState {
     }
 }
 
+// impl Clone for AppState {
+//     fn clone(&self) -> Self {
+//         // Manually clone the non-cloneable field 'database'
+//         let cloned_database = self.database;
+
+//         // Clone the rest of the fields
+//         let cloned_site_label = self.site_label.clone();
+//         let cloned_user_label = self.user_label.clone();
+//         let cloned_password_label = self.password_label.clone();
+//         let cloned_name = self.name.clone();
+
+//         // Construct the cloned AppState
+//         AppState {
+//             database: cloned_database,
+//             site_label: cloned_site_label,
+//             user_label: cloned_user_label,
+//             password_label: cloned_password_label,
+//             name: cloned_name,
+//         }
+//     }
+// }
 
 impl Data for AppState {
     fn same(&self, other: &Self) -> bool {
-        self.passsaves == other.passsaves && 
+        // self.database == other.database && 
         self.site_label == other.site_label &&
         self.user_label == other.user_label &&
         self.password_label == other.password_label
@@ -79,8 +101,28 @@ pub fn build_ui(pass_saves_fn: Vec<PassSave>) -> impl Widget<AppState> {
                 _ctx.request_update();
             });
 
-            col_sites = col_sites.with_child(Padding::new(5.0, site_button.center().align_horizontal(UnitPoint::CENTER)));
+            col_sites = col_sites.with_child(Padding::new(5.0, site_button));
     }
+    let plus_btn = Button::new("+")
+        .on_click(|_ctx, data: &mut AppState, _env|{
+
+            let new_entery = PassSave::new();
+            println!("+")
+
+        })    
+        .fix_width(1000.0)
+        .fix_height(1000.0);
+    let minus_btn = Button::new("-")
+        .fix_width(1000.0)
+        .fix_height(1000.0);
+
+    // Create Flex container and add buttons
+    let mut control_btns = Flex::row()
+        .with_child(plus_btn)
+        .with_child(minus_btn).center();
+    // control_btns.add_child(plus_btn);
+    // control_btns.add_child(minus_btn);
+    // control_btns = control_btns.add_child(minus_btn);
 
     let info_labels = Container::new(Flex::column()
         .with_child(site_info_box)
@@ -90,12 +132,13 @@ pub fn build_ui(pass_saves_fn: Vec<PassSave>) -> impl Widget<AppState> {
 
     let sites_buttons = col_sites.center();
     // Create a split layout with scrolling for the buttons and a column with the label
-    let split = Split::columns(
+    let split_database = Split::columns(
         Scroll::new(sites_buttons),
         info_labels
     ).draggable(true)
         .split_point(0.2);
     
+    let split = Split::rows(split_database, control_btns).split_point(0.95);
     split
 }
 

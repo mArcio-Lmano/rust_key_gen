@@ -60,11 +60,10 @@ impl PassSave{
     }
 }
 
-
 impl fmt::Display for PassSave {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         // Define how PassSave should be formatted when using {}
-        write!(f, "Site: {}, User: {}, PassSave: {}", self.site, self.user, self.pass)
+        write!(f, "Site: {}, User: {}, PassSave: {}, Id: {}", self.site, self.user, self.pass, self.id)
     }
 }
 
@@ -76,8 +75,11 @@ impl PartialEq for PassSave {
 
 impl Eq for PassSave {}
 
+
+// #[derive(Clone)]
 pub struct Database {
     connection: Connection,
+    pub passsaves: Vec<PassSave>
 }
 
 
@@ -85,7 +87,10 @@ impl Database {
     // Constructor method to create a new instance of Database
     pub fn new(database_path: &str) -> Result<Self> {
         let connection = Connection::open(database_path)?;
-        Ok(Database { connection })
+        Ok(Database { 
+            connection: connection,
+            passsaves: Vec::new(),
+        })
     }
 
     // Create table if it doesn't exist
@@ -111,7 +116,7 @@ impl Database {
     }
 
     // Query all password entries from the database
-    pub fn query_all_passsaves(&self) -> Result<Vec<PassSave>> {
+    pub fn query_all_passsaves(&self) -> Result<&Vec<PassSave>> {
         let mut stmt = self.connection.prepare("SELECT id, site, user, pass FROM passsave")?;
         let passsave_iter = stmt.query_map([], |row| {
             Ok(PassSave {
@@ -122,12 +127,12 @@ impl Database {
             })
         })?;
 
-        let mut passsaves = Vec::new();
+        // let mut passsaves = Vec::new();
         for passsave in passsave_iter {
-            passsaves.push(passsave?);
+            &self.passsaves.push(passsave?);
         }
-
-        Ok(passsaves)
+        // &self.passsaves = &passsaves;
+        Ok(&self.passsaves)
     }
 }
 

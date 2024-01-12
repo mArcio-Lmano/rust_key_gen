@@ -33,7 +33,7 @@ fn main() {
         .window_size((400.0, 400.0));
 
     // create the initial app state
-    let initial_state: AppState = AppState::new(pass_saves);
+    let initial_state: AppState = AppState::new(&database);
 
     // start the application. Here we pass in the application state.
     AppLauncher::with_window(main_window)
