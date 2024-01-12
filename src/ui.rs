@@ -101,6 +101,7 @@ pub fn build_ui(pass_saves_fn: Vec<PassSave>) -> impl Widget<AppState> {
                 _ctx.request_update();
             });
 
+<<<<<<< HEAD
             col_sites = col_sites.with_child(Padding::new(5.0, site_button));
     }
     let plus_btn = Button::new("+")
@@ -123,6 +124,10 @@ pub fn build_ui(pass_saves_fn: Vec<PassSave>) -> impl Widget<AppState> {
     // control_btns.add_child(plus_btn);
     // control_btns.add_child(minus_btn);
     // control_btns = control_btns.add_child(minus_btn);
+=======
+            col_sites = col_sites.with_child(Padding::new(5.0, site_button.center().align_horizontal(UnitPoint::CENTER)));
+    }
+>>>>>>> 3d4f0d223de0227d153c8e015b2460bcd92f833f
 
     let info_labels = Container::new(Flex::column()
         .with_child(site_info_box)
@@ -132,7 +137,11 @@ pub fn build_ui(pass_saves_fn: Vec<PassSave>) -> impl Widget<AppState> {
 
     let sites_buttons = col_sites.center();
     // Create a split layout with scrolling for the buttons and a column with the label
+<<<<<<< HEAD
     let split_database = Split::columns(
+=======
+    let split = Split::columns(
+>>>>>>> 3d4f0d223de0227d153c8e015b2460bcd92f833f
         Scroll::new(sites_buttons),
         info_labels
     ).draggable(true)
